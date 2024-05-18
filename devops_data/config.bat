@@ -15,7 +15,7 @@ set EditorPath=%EnginePath%\Engine\Binaries\Win64\UnrealEditor.exe
 set RunUATPath=%EnginePath%\Engine\Build\BatchFiles\RunUAT.bat
 
 rem Project params
-set ProjectRoot=%~dp0..
+set ProjectRoot=E:\GameDev\SnakeGame
 :: Pure name of your project. Example: name of you project file is TPS.uproject, then ProjectPureName=TPS
 set ProjectPureName=SnakeGame
 set ProjectName=%ProjectPureName%.uproject
