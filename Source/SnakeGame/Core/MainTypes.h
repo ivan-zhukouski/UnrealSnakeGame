@@ -8,8 +8,8 @@ namespace Snake
 {
 struct Dimension
 {
-    int32 width;
-    int32 height;
+    uint32 width;
+    uint32 height;
 };
 enum class CellType
 {
