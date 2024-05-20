@@ -46,6 +46,10 @@ private:
     uint32 ColorTableIndex {0};
     
     void FindFog();
+    /**
+     *Updates Grid and ExponentialFog colors
+     * according to the ColorTable property
+     */
     void UpdateColors();
 };
 
