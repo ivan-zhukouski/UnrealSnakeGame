@@ -13,7 +13,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogWorldGrid,All,All);
 ASG_Grid::ASG_Grid()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
     Origin = CreateDefaultSubobject<USceneComponent>("Origin");
     check(Origin);
     SetRootComponent(Origin);
@@ -40,6 +40,7 @@ void ASG_Grid::SetModel(const TSharedPtr<Snake::Grid>& Grid, uint32 InCellSize)
     CellSize = InCellSize;
     WorldWidth = GridDim.width * CellSize;
     WorldHeight = GridDim.height * CellSize;
+    //scale mesh
     check(GridMesh->GetStaticMesh())
     const FBox Box = GridMesh->GetStaticMesh()->GetBoundingBox();
     const auto Size = Box.GetSize();
@@ -47,12 +48,28 @@ void ASG_Grid::SetModel(const TSharedPtr<Snake::Grid>& Grid, uint32 InCellSize)
     check(Size.Y);
     GridMesh->SetRelativeScale3D(FVector(WorldHeight / Size.X, WorldWidth / Size.Y, 1.0));
     GridMesh->SetRelativeLocation(0.5 * FVector(WorldHeight,WorldWidth,-Size.Z));
+
+    //Setup material
+    GridMaterial = GridMesh->CreateAndSetMaterialInstanceDynamic(0);
+    if(GridMaterial)
+    {
+        GridMaterial->SetVectorParameterValue("Division", FVector(GridDim.height, GridDim.width, 0.0));
+    }
+}
+
+void ASG_Grid::UpdateColors(const FSnakeColors& Colors)
+{
+    {
+        GridMaterial->SetVectorParameterValue("BackgroundColor", Colors.GridBackgroundColor);
+        GridMaterial->SetVectorParameterValue("WallColor", Colors.GridWallColor);
+        GridMaterial->SetVectorParameterValue("LineColor", Colors.GridLineColor);
+    }
 }
 
 void ASG_Grid::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-    DrawGrid();
+    //DrawGrid();
 }
 
 void ASG_Grid::DrawGrid()

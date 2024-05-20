@@ -15,6 +15,7 @@ double VerticalFOV(double HorFOVDegrees, double ViewportAspectHW)
         // https://en.wikipedia.org/wiki/Field_of_view_in_video_games
         return FMath:: RadiansToDegrees(2.0* FMath::Atan(FMath::Tan(FMath::DegreesToRadians(HorFOVDegrees)* 0.5) * ViewportAspectHW));
     }
+constexpr double GridMargin = 2.0;
 }
 
 ASG_Pawn::ASG_Pawn()
@@ -58,13 +59,15 @@ void ASG_Pawn::OnViewportResized(FViewport* Viewport, uint32 Val)
     
     if(ViewportAspect <= GridAspect)
     {
-        LocationZ = WorldWidth / HalfFOVTan(MainCamera->FieldOfView);
+        const double MarginWidth = (Dim.width + GridMargin) * CellSize;
+        LocationZ = MarginWidth / HalfFOVTan(MainCamera->FieldOfView);
     }
     else
     {
        check(ViewportAspect);
         const double VertFOV = VerticalFOV(MainCamera->FieldOfView, 1.0 / ViewportAspect);
-        LocationZ = WorldHeight / HalfFOVTan(VertFOV);
+        const double MarginHeight = (Dim.height + GridMargin) * CellSize;
+        LocationZ = MarginHeight / HalfFOVTan(VertFOV);
     }
     
     const FVector NewPawnLocation = GridOrigin.GetLocation() + 0.5 * FVector( WorldHeight, WorldWidth, LocationZ);

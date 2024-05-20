@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SG_WorldTypes.h"
 #include "Core/MainTypes.h"
 #include "GameFramework/Actor.h"
 #include "SG_Grid.generated.h"
@@ -22,6 +23,8 @@ public:
     virtual void Tick(float DeltaTime) override;
     void SetModel(const TSharedPtr<Snake::Grid>& Grid, uint32 InCellSize);
 
+    void UpdateColors(const FSnakeColors& Colors);
+
 protected:
     UPROPERTY(VisibleAnywhere)
     USceneComponent* Origin;
@@ -32,6 +35,8 @@ protected:
 	virtual void BeginPlay() override;
 	
 private:
+    UPROPERTY()
+    UMaterialInstanceDynamic* GridMaterial;
     Snake::Dimension GridDim;
     uint32 CellSize;
     uint32 WorldWidth;
