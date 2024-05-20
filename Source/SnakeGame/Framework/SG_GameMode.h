@@ -9,29 +9,47 @@
 
 
 class ASG_Grid;
+class AExponentialHeightFog;
 
 UCLASS()
 class SNAKEGAME_API ASG_GameMode : public AGameModeBase
 {
 	GENERATED_BODY()
     
-    public:
+public:
     virtual void StartPlay() override;
 
-    protected:
+protected:
     UPROPERTY(EditDefaultsOnly, meta = (ClampMin = "10", ClampMax = "100"))
-    FIntPoint GridDims {10,10};
+    FUintPoint GridDims {10,10};
 
     UPROPERTY(EditDefaultsOnly, meta = (ClampMin = "10", ClampMax = "100"))
-    int32 CellSize{10};
+    uint32 CellSize{10};
 
     UPROPERTY(EditDefaultsOnly)
     TSubclassOf<ASG_Grid> GridVisualClass;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Design")
+    UDataTable* ColorsTable;
     
-    private:
-    TUniquePtr<Snake::Game> CoreGame;
-    
+private:
     UPROPERTY()
     ASG_Grid* GridVisual;
+    
+    UPROPERTY()
+    AExponentialHeightFog* Fog;
+
+    UFUNCTION(Exec, Category = "Console Command")
+    void NextColor();
+    
+    TUniquePtr<Snake::Game> CoreGame;
+    uint32 ColorTableIndex {0};
+    
+    void FindFog();
+    /**
+     *Updates Grid and ExponentialFog colors
+     * according to the ColorTable property
+     */
+    void UpdateColors();
 };
 

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SG_WorldTypes.h"
 #include "Core/MainTypes.h"
 #include "GameFramework/Actor.h"
 #include "SG_Grid.generated.h"
@@ -20,16 +21,26 @@ class SNAKEGAME_API ASG_Grid : public AActor
 public:	
 	ASG_Grid();
     virtual void Tick(float DeltaTime) override;
-    void SetModel(const TSharedPtr<Snake::Grid>& Grid, int32 InCellSize);
+    void SetModel(const TSharedPtr<Snake::Grid>& Grid, uint32 InCellSize);
+
+    void UpdateColors(const FSnakeColors& Colors);
 
 protected:
+    UPROPERTY(VisibleAnywhere)
+    USceneComponent* Origin;
+
+    UPROPERTY(VisibleAnywhere)
+    UStaticMeshComponent* GridMesh;
+    
 	virtual void BeginPlay() override;
 	
 private:
+    UPROPERTY()
+    UMaterialInstanceDynamic* GridMaterial;
     Snake::Dimension GridDim;
-    int32 CellSize;
-    int32 WorldWidth;
-    int32 WorldHeight;
+    uint32 CellSize;
+    uint32 WorldWidth;
+    uint32 WorldHeight;
 
     void DrawGrid();
 };
