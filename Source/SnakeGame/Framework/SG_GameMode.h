@@ -31,6 +31,7 @@ protected:
 
     UPROPERTY(EditDefaultsOnly, Category = "Design")
     UDataTable* ColorsTable;
+
     
 private:
     UPROPERTY()
@@ -42,10 +43,12 @@ private:
     UFUNCTION(Exec, Category = "Console Command")
     void NextColor();
     
-    TUniquePtr<Snake::Game> CoreGame;
+    TUniquePtr<SnakeGame::Game> CoreGame;
     uint32 ColorTableIndex {0};
     
     void FindFog();
+
+   
     /**
      *Updates Grid and ExponentialFog colors
      * according to the ColorTable property

@@ -18,7 +18,7 @@ class SNAKEGAME_API ASG_Pawn : public APawn
 public:
 	ASG_Pawn();
     
-    void UpdateLocation(const Snake::Dimension& Dim, int32 CellSize, const FTransform& GridOrigin);
+    void UpdateLocation(const SnakeGame::Dimension& Dim, int32 CellSize, const FTransform& GridOrigin);
     
 protected:
     
@@ -28,7 +28,7 @@ protected:
     UPROPERTY(VisibleAnywhere)
     UCameraComponent* MainCamera;
 private:
-    Snake::Dimension Dim;
+    SnakeGame::Dimension Dim;
     int32 CellSize;
     FTransform GridOrigin;
     FDelegateHandle ResizeHandle;

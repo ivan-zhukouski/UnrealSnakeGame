@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MainTypes.h"
 
-namespace Snake
+namespace SnakeGame
 {
 
 class Grid

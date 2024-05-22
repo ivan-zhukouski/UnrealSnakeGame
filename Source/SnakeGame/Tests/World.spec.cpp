@@ -15,9 +15,9 @@
 BEGIN_DEFINE_SPEC(FSnakeWorld, "Snake",
     EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter | EAutomationTestFlags::HighPriority)
     UWorld* World;
-    Snake::Dimension Dims;
+    SnakeGame::Dimension Dims;
     uint32 CellsSize;
-    TSharedPtr<Snake::Grid> ModelGrid;
+    TSharedPtr<SnakeGame::Grid> ModelGrid;
     UStaticMeshComponent* GridStaticMesh;
     ASG_Grid* GridVisual;
 END_DEFINE_SPEC(FSnakeWorld)
@@ -34,9 +34,9 @@ void FSnakeWorld::Define()
             World = GetTestGameWorld();
             const char* GridBPName = "Blueprint'/Game/World/BP_SnakeGrid.BP_SnakeGrid'";
 
-            Dims = Snake::Dimension{10, 10};
+            Dims = SnakeGame::Dimension{10, 10};
             CellsSize = 20;
-            ModelGrid = MakeShared<Snake::Grid>(Dims);
+            ModelGrid = MakeShared<SnakeGame::Grid>(Dims);
 
             const FTransform OriginTransform = FTransform::Identity;
             GridVisual = CreateBlueprintDeferred<ASG_Grid>(World, GridBPName, OriginTransform);

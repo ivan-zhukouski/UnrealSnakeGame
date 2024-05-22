@@ -8,7 +8,7 @@
 
 class Grid;
 
-namespace Snake
+namespace SnakeGame
 {
 
 class SNAKEGAME_API Game

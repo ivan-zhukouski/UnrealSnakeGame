@@ -17,8 +17,8 @@ void ASG_GameMode::StartPlay()
 {
     Super::StartPlay();
     //init core game
-    const Snake::Settings GameSettings {GridDims.X, GridDims.Y};
-    CoreGame = MakeUnique<Snake::Game>(GameSettings);
+    const SnakeGame::Settings GameSettings {GridDims.X, GridDims.Y};
+    CoreGame = MakeUnique<SnakeGame::Game>(GameSettings);
     check(CoreGame.IsValid());
 
     //init world grid
@@ -46,6 +46,7 @@ void ASG_GameMode::StartPlay()
     check(RowsCount >= 1);
     ColorTableIndex = FMath::RandRange(0, RowsCount - 1);
     UpdateColors();
+    UE_LOG(LogTemp,Warning,TEXT("Kek"));
 }
 
 void ASG_GameMode::NextColor()

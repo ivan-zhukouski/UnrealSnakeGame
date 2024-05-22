@@ -5,7 +5,7 @@
 #include "SnakeGame/Core/Grid.h"
 
 
-using namespace Snake;
+using namespace SnakeGame;
 
 DEFINE_LOG_CATEGORY_STATIC(LogGame,All,All);
 
