@@ -7,17 +7,31 @@
 #include "SnakeGame/Core/MainTypes.h"
 #include "SnakeGame/Core/Grid.h"
 #include "World/SG_Grid.h"
+#include "World/SG_Snake.h"
 #include "World/SG_WorldTypes.h"
 #include "Engine/ExponentialHeightFog.h"
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "World/SG_Snake.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
+
+ASG_GameMode::ASG_GameMode()
+{
+    PrimaryActorTick.bCanEverTick = true;
+}
 
 void ASG_GameMode::StartPlay()
 {
     Super::StartPlay();
     //init core game
-    const SnakeGame::Settings GameSettings {GridDims.X, GridDims.Y};
+    SnakeGame::Settings GameSettings;
+    GameSettings.gridDims = SnakeGame::Dimension{GridDims.X,GridDims.Y};
+    GameSettings.snakeSpeed = SnakeSpeed;
+    GameSettings.snake.defaultSize = SnakeDefaultSize;
+    GameSettings.snake.startPosition = SnakeGame::Position{GridDims.X / 2, GridDims.Y / 2};
+    //{GridDims.X, GridDims.Y};
     CoreGame = MakeUnique<SnakeGame::Game>(GameSettings);
     check(CoreGame.IsValid());
 
@@ -28,6 +42,11 @@ void ASG_GameMode::StartPlay()
     check(GridVisual);
     GridVisual->SetModel(CoreGame->grid(),CellSize);
     GridVisual->FinishSpawning(GridOrigin);
+
+    //init world snake
+    SnakeVisual = GetWorld()->SpawnActorDeferred<ASG_Snake>(SnakeVisualClass, GridOrigin);
+    SnakeVisual->SetModel(CoreGame->snake(),CellSize,CoreGame->grid()->dimension());
+    SnakeVisual->FinishSpawning(GridOrigin);
     //set pawn location
 
     auto* PlayerController = GetWorld()->GetFirstPlayerController();
@@ -46,7 +65,8 @@ void ASG_GameMode::StartPlay()
     check(RowsCount >= 1);
     ColorTableIndex = FMath::RandRange(0, RowsCount - 1);
     UpdateColors();
-    UE_LOG(LogTemp,Warning,TEXT("Kek"));
+    //
+    SetupInput();
 }
 
 void ASG_GameMode::NextColor()
@@ -84,5 +104,43 @@ void ASG_GameMode::UpdateColors()
             Fog->GetComponent()->SkyAtmosphereAmbientContributionColorScale = ColorSet->SkyAtmosphereColor;
             Fog->MarkComponentsRenderStateDirty();
         }
+    }
+}
+
+void ASG_GameMode::SetupInput()
+{
+    if(!GetWorld()) return;
+    if(auto* PC = Cast<APlayerController>(GetWorld()->GetFirstPlayerController()))
+    {
+        if(auto* InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
+        {
+            InputSystem->AddMappingContext(InputMapping,0);
+        }
+        auto* Input = Cast<UEnhancedInputComponent>(PC->InputComponent);
+        check(Input);
+        Input->BindAction(MoveForwardInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnMoveForward);
+        Input->BindAction(MoveRightInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnMoveRight);
+    }
+}
+
+void ASG_GameMode::OnMoveForward(const FInputActionValue& Value)
+{
+    const float InputValue = Value.Get<float>();
+    SnakeInput = SnakeGame::Input{0,static_cast<int8>(InputValue)};
+}
+
+void ASG_GameMode::OnMoveRight(const FInputActionValue& Value)
+{
+    const float InputValue = Value.Get<float>();
+    SnakeInput = SnakeGame::Input{static_cast<int8>(InputValue),0};
+}
+
+void ASG_GameMode::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+    if( CoreGame.IsValid())
+    {
+        CoreGame->update(DeltaSeconds,SnakeInput);
+        
     }
 }
